@@ -1,5 +1,5 @@
 export class CreateWallpaperDto {
     readonly title: string;
-    readonly image: string;
+    image: string;
     readonly description?: string;
 }

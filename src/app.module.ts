@@ -1,13 +1,18 @@
 import { Module } from '@nestjs/common';
+import { MulterModule } from '@nestjs/platform-express';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { WallpapersModule } from './wallpapers/wallpapers.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import {TypeOrmModule} from '@nestjs/typeorm';
+import { join } from 'path';
 
 
 @Module({
-  imports: [WallpapersModule, ConfigModule.forRoot({ isGlobal: true }),
+  imports: [
+    WallpapersModule,
+    ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
@@ -22,7 +27,11 @@ import {TypeOrmModule} from '@nestjs/typeorm';
         autoLoadEntities: true
       }),
       inject: [ConfigService],
-    }),],
+    }),
+    MulterModule.register({ dest: './uploads'}),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'public'),
+    })],
   controllers: [AppController],
   providers: [AppService],
 })
